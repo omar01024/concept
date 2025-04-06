@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <cctype>
 #include <string>
 
@@ -11,7 +10,8 @@ char nextChar;
 int lexLen;
 int token;
 int nextToken;
-ifstream in_fp;
+string input = "x = 42 + (y - 3) * 5 / 2";
+int pos = 0;
 
 void addChar();
 void getChar();
@@ -32,16 +32,10 @@ const int LEFT_PAREN = 25;
 const int RIGHT_PAREN = 26;
 
 int main() {
-    in_fp.open("front.in");
-    if (!in_fp.is_open()) {
-        cout << "ERROR - cannot open front.in" << endl;
-    } else {
-        getChar();
-        do {
-            lex();
-        } while (nextToken != EOF);
-    }
-    in_fp.close();
+    getChar();
+    do {
+        lex();
+    } while (nextToken != EOF);
     return 0;
 }
 
@@ -71,6 +65,10 @@ int lookup(char ch) {
             addChar();
             nextToken = DIV_OP;
             break;
+        case '=':
+            addChar();
+            nextToken = ASSIGN_OP;
+            break;
         default:
             addChar();
             nextToken = EOF;
@@ -89,7 +87,8 @@ void addChar() {
 }
 
 void getChar() {
-    if (in_fp.get(nextChar)) {
+    if (pos < input.length()) {
+        nextChar = input[pos++];
         if (isalpha(nextChar))
             charClass = LETTER;
         else if (isdigit(nextChar))
